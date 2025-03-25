@@ -1,0 +1,53 @@
+{#
+ # -------------------------------------------------------------------------
+ # Plugin FieldsPanel para GLPI
+ # -------------------------------------------------------------------------
+ # © 2025
+ # -------------------------------------------------------------------------
+#}
+
+{% extends 'layout/page_card_notloaded.html.twig' %}
+
+{% block content %}
+<div class="asset mb-4">
+    <div class="card-header">
+        <h3>{{ __('Configuração do Painel de Campos', 'fieldspanel') }}</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="post" action="{{ path('front/config.form.php') }}">
+            {{ csrf() }}
+            
+            <div class="mb-3">
+                <label class="form-label">{{ __('Ordem e Visibilidade dos Elementos', 'fieldspanel') }}</label>
+                <div id="sortable-items" class="fieldspanel-sortable">
+                    {% for key in config.order %}
+                        <div class="fieldspanel-item" data-key="{{ key }}">
+                            <i class="fas fa-arrows-alt"></i>
+                            <input type="checkbox" name="visible[{{ key }}]" value="1" {% if config.visible[key] %}checked{% endif %}>
+                            {{ __('items.' ~ key, 'fieldspanel') }}
+                            <input type="hidden" name="order[]" value="{{ key }}">
+                        </div>
+                    {% endfor %}
+                </div>
+                <small class="form-text text-muted">{{ __('Arraste os elementos para reordenar. Marque ou desmarque os checkboxes para mostrar ou ocultar elementos.', 'fieldspanel') }}</small>
+            </div>
+            
+            <div class="d-flex justify-content-center">
+                <button type="submit" name="update" class="btn btn-primary me-2">
+                    <i class="ti ti-device-floppy me-1"></i>
+                    {{ __('Salvar') }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript_block %}
+<script>
+$(document).ready(function() {
+    FieldsPanel.initSortable(document.getElementById('sortable-items'));
+});
+</script>
+{% endblock %}
